@@ -14,7 +14,7 @@ Install required libraries via:
 
 ```bash
 pip install numpy matplotlib
-
+```
 
 ## Feature Overview
 
