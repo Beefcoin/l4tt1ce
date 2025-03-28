@@ -37,10 +37,6 @@ def visualizeScalar(sim, t):
         plt.savefig(f"frames/phi_{t:05d}.png", dpi=150)
         plt.close()
 
-import matplotlib.pyplot as plt
-import numpy as np
-import os
-
 def visualize_combined(sim, t, overall_title=None):
     #this creates matplotlib plots for velocity and scalar value of a single lattice setup
     #maybe this has to be changed to receive fields and not a lattice object for more customizability
@@ -105,10 +101,6 @@ def visualize_combined(sim, t, overall_title=None):
             "velocity": (u_x, u_y, u_z),
         }
     ) """
-
-import os
-import numpy as np
-from pyevtk.hl import imageToVTK
 
 def export_fields_vti(timestep, u, phi=None, output_dir="output_vti"):
     #this creates vti files for paraview for velocity and (scalar field)
