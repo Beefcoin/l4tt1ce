@@ -29,7 +29,7 @@ pip install numpy matplotlib
 
 ## Showcases
 ### Flow around obstacles
-![me](https://github.com/Beefcoin/l4tt1ce/blob/main/showcases/flowAroundObject.gif)
+![me](https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExdmE5N2tnaDZjN2Jkd3JvaXBxZXMwbTN0YXhtZXB6dTM4bmQwb2UzZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/gv1LI63WFKrTyV4Rcf/giphy.gif)
 ### Heated obstacle in channel
 <p align="center">
   <img width="800" alt="" src="showcase/heatedObject.gif">
