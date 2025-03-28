@@ -30,7 +30,9 @@ pip install numpy matplotlib
 ## Showcases
 ### Flow around obstacles
 ### Heated obstacle in channel
-![Heated Object Simulation](showcase/heatedObject.gif)
+<p align="center">
+  <img width="800" alt="" src="showcase/heatedObject.gif">
+</p>
 
 
 
