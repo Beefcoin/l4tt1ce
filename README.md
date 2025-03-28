@@ -9,6 +9,13 @@ This project uses the **BGK** (Bhatnagar-Gross-Krook) operator to simulate:
 
 ---
 
+## Requirements
+Install required libraries via:
+
+```bash
+pip install numpy matplotlib
+
+
 ## Feature Overview
 
 | Feature                          | Status   | Description                                        |
@@ -21,12 +28,4 @@ This project uses the **BGK** (Bhatnagar-Gross-Krook) operator to simulate:
 | MRT/TRT Models                   | 🔜 Todo  | Advanced collision operators                       |
 
 
-## Requirements
-
-
-
-Install required libraries via:
-
-```bash
-pip install numpy matplotlib
 
