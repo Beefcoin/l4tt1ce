@@ -13,7 +13,7 @@ This project uses the **BGK** (Bhatnagar-Gross-Krook) operator to simulate:
 Install required libraries via:
 
 ```bash
-pip install numpy matplotlib
+pip install numpy matplotlib pyevtk
 ```
 
 ## Feature Overview
