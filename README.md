@@ -27,5 +27,11 @@ pip install numpy matplotlib
 | Geometry from Images             | 🔜 Todo  | Planned feature                                    |
 | MRT/TRT Models                   | 🔜 Todo  | Advanced collision operators                       |
 
+## Showcases
+### Flow around obstacles
+### Heated obstacle in channel
+![Heated Object Simulation](showcase/heatedObject.gif)
+
+
 
 
