@@ -10,11 +10,30 @@ This project uses the **BGK** (Bhatnagar-Gross-Krook) operator to simulate:
 ---
 
 ## Requirements
-Install required libraries via:
+The project uses [poetry](https://python-poetry.org/) for dependency management.
+First install poetry as described in the [official documentation](https://python-poetry.org/docs/#installation), then installing the dependencies is as simple as running:
 
 ```bash
-pip install numpy matplotlib pyevtk
+poetry install
 ```
+
+This automatically creates a virtual environment and installs all the required packages.
+It's recommended to run `poetry config virtualenvs.in-project true` before installing the dependencies, which places the created virtual environment in the project directory (`.venv`).
+
+## Running the examples
+There's generally two ways to run examples through the command line, either by activating the virtual environment and running the script directly, or by using poetry to run the script in the virtual environment.
+
+**Running the script using python in the virtual environment**:
+```bash
+poetry shell
+python showcase_heatedObject.py
+```
+
+**Running the script through poetry**:
+```bash
+poetry run python showcase_heatedObject.py
+```
+
 
 ## Feature Overview
 
