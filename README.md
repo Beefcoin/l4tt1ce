@@ -23,9 +23,8 @@ pip install numpy matplotlib pyevtk
 | 2D Simulation                    | ✅ Done  | Current implementation supports 2D flows           |
 | Dirichlet & Neumann BCs         | ✅ Done  | Velocity, pressure, concentration, flux boundaries |
 | Coupled Scalar Transport         | ✅ Done  | Advection-diffusion modeling                       |
-| 3D Simulation                    | 🚧 WIP   | Planned for future release                         |
-| Geometry from Images             | 🔜 Todo  | Planned feature                                    |
-| MRT/TRT Models                   | 🔜 Todo  | Advanced collision operators                       |
+| 3D Simulation                    | ✅ Done   | Load geometry from VTK files                        |
+| MRT/TRT Models                   | 🔜 Todo  | Advanced collision operators coming soon                       |
 
 ## Showcases
 ### Flow around obstacles
