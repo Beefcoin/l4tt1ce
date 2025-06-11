@@ -13,7 +13,7 @@ This project uses the **BGK** (Bhatnagar-Gross-Krook) operator to simulate:
 Install required libraries via:
 
 ```bash
-pip install numpy matplotlib
+pip install numpy matplotlib pyevtk
 ```
 
 ## Feature Overview
@@ -29,10 +29,9 @@ pip install numpy matplotlib
 
 ## Showcases
 ### Flow around obstacles
+![me](https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExdmE5N2tnaDZjN2Jkd3JvaXBxZXMwbTN0YXhtZXB6dTM4bmQwb2UzZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/gv1LI63WFKrTyV4Rcf/giphy.gif)
 ### Heated obstacle in channel
-<p align="center">
-  <img width="800" alt="" src="showcase/heatedObject.gif">
-</p>
+![me](https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExancxc3d4Mmc0YWJxaG5hMGs4eHY3cWZ3ZmxkOTF3dnQ4Z2Z5ZnprYyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/8oFlu2HEWHScOQqiny/giphy.gif)
 
 
 
