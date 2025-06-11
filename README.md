@@ -24,6 +24,7 @@ pip install numpy matplotlib pyevtk
 | Dirichlet & Neumann BCs         | ✅ Done  | Velocity, pressure, concentration, flux boundaries |
 | Coupled Scalar Transport         | ✅ Done  | Advection-diffusion modeling                       |
 | 3D Simulation                    | ✅ Done   | Load geometry from VTK files                        |
+| 3D Scalar Transport                   | 🔜 Todo    | Scalar transport in 3D is currently not implemented                        |
 | MRT/TRT Models                   | 🔜 Todo  | Advanced collision operators coming soon                       |
 
 ## Showcases
