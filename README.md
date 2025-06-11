@@ -1,6 +1,6 @@
 # L4tt1ce
 
-A lightweight **2D** Python implementation of the Lattice Boltzmann Method (LBM).
+A lightweight **2D**/**3D** Python implementation of the Lattice Boltzmann Method (LBM).
 
 This project uses the **BGK** (Bhatnagar-Gross-Krook) operator to simulate:
 
