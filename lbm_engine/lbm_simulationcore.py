@@ -1,5 +1,5 @@
 import numpy as np
-
+from numba import njit
 class Lattice2D:
     def __init__(self, nx, ny, descriptor, collisionOperator):
         #define the lattice dimensions in lattice units
@@ -67,6 +67,94 @@ class Lattice2D:
         #We are done with this Stream&Collide so increment timeStep
         self.t += 1
 
+from numba import njit, prange
+import numpy as np
+
+@njit(parallel=True)
+def stream_collide_bgk(f, u, rho, e, w, tau):
+    nz, ny, nx, Q = f.shape
+    f_new = np.empty_like(f)
+
+    # streaming step
+    for i in prange(Q):
+        dx, dy, dz = e[i]
+        for z in range(nz):
+            for y in range(ny):
+                for x in range(nx):
+                    zp = (z - dz) % nz
+                    yp = (y - dy) % ny
+                    xp = (x - dx) % nx
+                    f_new[z, y, x, i] = f[zp, yp, xp, i]
+
+    # wtf is this and why does it work (macroscopic)
+    for z in prange(nz):
+        for y in range(ny):
+            for x in range(nx):
+                rho_local = 0.0
+                u_local = np.zeros(3)
+                for i in range(Q):
+                    fval = f_new[z, y, x, i]
+                    rho_local += fval
+                    for d in range(3):
+                        u_local[d] += fval * e[i, d]
+
+                rho[z, y, x] = rho_local
+                for d in range(3):
+                    u[z, y, x, d] = u_local[d] / (rho_local + 1e-10)
+
+                u2 = np.sum(u[z, y, x] ** 2)
+                for i in range(Q):
+                    cu = 0.0
+                    for d in range(3):
+                        cu += u[z, y, x, d] * e[i, d]
+                    feq = w[i] * rho_local * (1 + 3*cu + 4.5*cu**2 - 1.5*u2)
+                    f_new[z, y, x, i] += -(1.0 / tau) * (f_new[z, y, x, i] - feq)
+
+    return f_new
+
+class Lattice3D:
+    def __init__(self, nx, ny, nz, descriptor, collisionOperator):
+        self.nx, self.ny, self.nz = nx, ny, nz
+        self.descriptor = descriptor
+        self.collisionOperator = collisionOperator
+        self.e = descriptor.e
+        self.opp = descriptor.opp
+        self.Q = descriptor.Q
+
+        #setup grid
+        self.X, self.Y, self.Z = np.meshgrid(
+            np.arange(nx), np.arange(ny), np.arange(nz), indexing='ij'
+        )
+
+        self.geometry = {}
+
+        #field initialization
+        self.rho = np.ones((nz, ny, nx))                     #density field
+        self.u = np.zeros((nz, ny, nx, 3))                   #velocity field
+        self.f = np.zeros((nz, ny, nx, self.Q))              #distributin function
+        self.t = 0                                            #time step counter
+
+        #initialize f as equilibrium distribution
+        print("Type of collisionOperator:", type(self.collisionOperator))
+        self.f = self.collisionOperator.compute_feq(self.descriptor, self.rho, self.u)
+
+    def addOperator(self, name, operator):
+        self.geometry[name] = operator
+
+    def step(self):
+        # --- Streaming & Collision ---
+        self.f = stream_collide_bgk(
+            self.f, self.u, self.rho,
+            self.descriptor.e,
+            self.descriptor.w,
+            self.collisionOperator.tau
+        )
+
+        # --- Boundary conditions ---
+        for operator in self.geometry.values():
+            operator.apply(self.f, self.u, self.rho)
+
+        self.t += 1
 
 
 

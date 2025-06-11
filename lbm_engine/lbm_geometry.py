@@ -1,8 +1,46 @@
 import numpy as np
+import vtk
+from vtk.util.numpy_support import vtk_to_numpy
 
 """ This file contains some geometry helper methods to create geometry masks
 In the Future i want to read geometry information from image data but atm  
 this is a pretty good way to set up basic simulations for testing the implementation """
+
+import vtk
+import numpy as np
+from vtk.util.numpy_support import vtk_to_numpy
+
+def load_mask_from_vti(filename, field_name="mask"):
+    reader = vtk.vtkXMLImageDataReader()
+    reader.SetFileName(filename)
+    reader.Update()
+
+    data = reader.GetOutput()
+    pd = data.GetPointData()
+
+    print("Available point data arrays:")
+    for i in range(pd.GetNumberOfArrays()):
+        print(f" - {i}: {pd.GetArrayName(i)}")
+
+    array = pd.GetArray(field_name)
+    if array is None:
+        raise ValueError(f"Field '{field_name}' not found")
+
+    flat_array = vtk_to_numpy(array)
+    if flat_array.ndim == 2 and flat_array.shape[1] == 3:
+        print("Detected RGB/vector field – using only first component")
+        flat_array = flat_array[:, 0] 
+
+
+    dims = data.GetDimensions() 
+    shape = (dims[2], dims[1], dims[0]) 
+
+    if flat_array.size != np.prod(shape):
+        raise ValueError(f"Size mismatch: flat_array={flat_array.size}, shape={shape}")
+
+    arr = flat_array.reshape(shape)
+    return np.transpose(arr, (2, 1, 0)) 
+
 
 def create_triangle_mask(X, Y, center_x, center_y, base_width, height, direction='right'):
     mask = np.zeros_like(X, dtype=bool)

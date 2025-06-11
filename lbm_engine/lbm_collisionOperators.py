@@ -1,5 +1,5 @@
 import numpy as np
-
+from numba import njit
 """ This file contains Collison Operators like BGK and Advection Diffusion BGK 
 The implementation is pretty simple and you should be able to add your own 
 Operators based on the main CollisionOperator """
@@ -10,7 +10,23 @@ class CollisionOperator:
     def compute_feq(self, rho=None, u=None,mask = None):
         pass
 
-class BGK_collisionOperator(CollisionOperator):
+@njit(parallel=True)
+def compute_feq_numba(e, w, rho, u):
+    nz, ny, nx = rho.shape
+    Q = e.shape[0]
+    feq = np.zeros((nz, ny, nx, Q))
+    for i in range(Q):
+        for z in range(nz):
+            for y in range(ny):
+                for x in range(nx):
+                    cu = 0.0
+                    u2 = 0.0
+                    for d in range(3):
+                        cu += u[z, y, x, d] * e[i, d]
+                        u2 += u[z, y, x, d]**2
+                    feq[z, y, x, i] = w[i] * rho[z, y, x] * (1 + 3*cu + 4.5*cu**2 - 1.5*u2)
+    return feq
+class BGK_collisionOperator2D(CollisionOperator):
     def __init__(self, tau):
         self.tau = tau
     def compute_feq(self, descriptor, rho, u, mask=None):
@@ -43,7 +59,29 @@ class BGK_collisionOperator(CollisionOperator):
         feq = self.compute_feq(descriptor, rho, u, mask)
         delta_f = -(1.0 / self.tau) * (f_lattice - feq)
         return delta_f
-    
+
+
+import numpy as np
+
+class BGK_collisionOperator3D(CollisionOperator):
+    def __init__(self, tau):
+        self.tau = tau
+
+    def compute_feq(self, descriptor, rho, u, mask=None):
+        feq = compute_feq_numba(descriptor.e, descriptor.w, rho, u)
+
+        if mask is not None:
+            feq_masked = np.zeros_like(feq)
+            for i in range(descriptor.Q):
+                feq_masked[..., i][mask] = feq[..., i][mask]
+            return feq_masked
+
+        return feq
+    def compute_delta_f(self, descriptor, f_lattice, rho, u, mask=None):
+        feq = self.compute_feq(descriptor, rho, u, mask)
+        delta_f = -(1.0 / self.tau) * (f_lattice - feq)
+        return delta_f
+
 
 class BGK_AdvectionDiffusion_collisionOperator(CollisionOperator):
     def __init__(self, tau):

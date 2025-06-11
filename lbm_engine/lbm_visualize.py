@@ -37,47 +37,51 @@ def visualizeScalar(sim, t):
         plt.savefig(f"frames/phi_{t:05d}.png", dpi=150)
         plt.close()
 
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
 import os
 
-def visualize_combined(sim, t, overall_title=None):
-    #this creates matplotlib plots for velocity and scalar value of a single lattice setup
-    #maybe this has to be changed to receive fields and not a lattice object for more customizability
+def visualize_combined(sim, t, overall_title=None, scale = 10, dpi =150):
+    # Compute velocity magnitude
     vmag = np.sqrt(sim.u[:, :, 0]**2 + sim.u[:, :, 1]**2)
     phi = sim.phi
 
-    # We mask the obstabcles as NaN, so they are more visible in the plot area
+    # Mask obstacles with NaN
     if "obstacle" in sim.geometry:
         mask = sim.geometry["obstacle"].mask
         if mask.shape != vmag.shape:
             mask = mask.T
+        vmag = vmag.copy()
+        phi = phi.copy()
         vmag[mask] = np.nan
         phi[mask] = np.nan
 
-    # basic plot shit
-    fig, axs = plt.subplots(2, 1, figsize=(8, 8))
+    # Get data shape and compute figure size to match aspect ratio
+    ny, nx = vmag.shape
+    fig_width = scale * (nx / max(nx, ny))  # normalize by max dimension
+    fig_height = scale * (ny / max(nx, ny)) * 2  # times 2 because of two subplots
 
-    # We set a overall title for the plot
+    fig, axs = plt.subplots(2, 1, figsize=(fig_width, fig_height), dpi=dpi)
+
     if overall_title:
         fig.suptitle(overall_title, fontsize=14, fontweight='bold', y=0.98)
 
-    # This is plots the magnitude velocity and sets upper limit as some fixed value from parameter (can be changed somehow but VTK is better anyways)
+    # Velocity magnitude plot (fixed color scale)
     im1 = axs[0].imshow(vmag, cmap="coolwarm", vmin=0, vmax=0.19)
     axs[0].set_title("Velocity Magnitude")
     axs[0].axis("off")
     fig.colorbar(im1, ax=axs[0], fraction=0.046, pad=0.04, label="|u|")
 
-    # This plots the scalar value and autoscales (for dirichlet boundaries it will result in a constant scaling because of the maximum being a fixed value)
+    # Scalar field plot (autoscale color)
     im2 = axs[1].imshow(phi, cmap="inferno")
     axs[1].set_title("Scalar Field ϕ")
     axs[1].axis("off")
     fig.colorbar(im2, ax=axs[1], fraction=0.046, pad=0.04, label="ϕ")
 
-    plt.tight_layout(rect=[0, 0, 1, 0.95])
     os.makedirs("frames", exist_ok=True)
-    plt.savefig(f"frames/combined_{t:05d}.png", dpi=150)
+    plt.savefig(f"frames/combined_{t:05d}.png", dpi=dpi)
     plt.close()
+
 
 
 
@@ -106,11 +110,7 @@ def visualize_combined(sim, t, overall_title=None):
         }
     ) """
 
-import os
-import numpy as np
-from pyevtk.hl import imageToVTK
-
-def export_fields_vti(timestep, u, phi=None, output_dir="output_vti"):
+def export_fields_vti2D(timestep, u, phi=None, output_dir="output_vti"):
     #this creates vti files for paraview for velocity and (scalar field)
     ny, nx = u.shape[:2]
     spacing = (1.0, 1.0, 1.0) 
@@ -138,5 +138,33 @@ def export_fields_vti(timestep, u, phi=None, output_dir="output_vti"):
         pointData=point_data
     )
 
+def export_fields_vti3D(timestep, u, phi=None, output_dir="output_vti"):
+    # u: (nz, ny, nx, 3) – velocity field
+    # phi: (nz, ny, nx) – optional scalar field (e.g., density, temperature)
+    nz, ny, nx = u.shape[:3]
+    spacing = (1.0, 1.0, 1.0)
+    origin = (0.0, 0.0, 0.0)
+
+    # Transpose from (z, y, x) to (x, y, z) fdor VTK
+    u_x = np.ascontiguousarray(np.transpose(u[:, :, :, 0], (2, 1, 0)))
+    u_y = np.ascontiguousarray(np.transpose(u[:, :, :, 1], (2, 1, 0)))
+    u_z = np.ascontiguousarray(np.transpose(u[:, :, :, 2], (2, 1, 0)))
+
+    point_data = {
+        "velocity": (u_x, u_y, u_z)
+    }
+
+    if phi is not None:
+        phi_3d = np.ascontiguousarray(np.transpose(phi, (2, 1, 0)))
+        point_data["phi"] = phi_3d
+
+    os.makedirs(output_dir, exist_ok=True)
+
+    imageToVTK(
+        os.path.join(output_dir, f"fields_{timestep:05d}"),
+        origin=origin,
+        spacing=spacing,
+        pointData=point_data
+    )
 
 
