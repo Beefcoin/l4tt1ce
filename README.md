@@ -1,3 +1,6 @@
+## Project Status
+This repository is archived and not under active development.
+
 # L4tt1ce
 
 A lightweight **2D**/**3D** Python implementation of the Lattice Boltzmann Method (LBM).
@@ -6,8 +9,6 @@ This project uses the **BGK** (Bhatnagar-Gross-Krook) operator to simulate:
 
 - Navier-Stokes fluid dynamics
 - Scalar transport (advection-diffusion)
-
----
 
 ## Requirements
 Install required libraries via:
