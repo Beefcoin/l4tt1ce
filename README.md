@@ -1,5 +1,7 @@
 ## Project Status
-This repository is archived and not under active development.
+This repository is archived and not under active development.  
+I am currently working on a completely new optimized implementation for reactive transport in porous media,  
+but since this is more of a fun project it will take some time :)
 
 # L4tt1ce
 
